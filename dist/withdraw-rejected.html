@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta content="width=device-width, initial-scale=1, maximum-scale=1, shrink-to-fit=no" name="viewport">
+    <title>Dashboard</title>
+
+    <!-- General CSS Files -->
+    <link rel="stylesheet" href="asset/admin/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/izitoast/1.4.0/css/iziToast.css">
+    <link rel="stylesheet" href="asset/admin/css/style.css">
+    <link rel="stylesheet" href="asset/admin/css/components.css">
+    <link rel="stylesheet" href="asset/admin/css/custom.css">
+</head>
+
+<body>
+    <div id="app">
+        <div class="main-wrapper">
+            <div id="overlay">
+                <div class="cv-spinner">
+                    <span class="spinner"></span>
+                </div>
+            </div>
+
+            <!-- Navbar -->
+            <nav class="navbar navbar-expand-lg main-navbar">
+                <form class="form-inline mr-auto">
+                    <ul class="navbar-nav mr-3">
+                        <li class="bars-icon-navbar">
+                            <a href="#" data-toggle="sidebar" class="nav-link nav-link-lg">
+                                <i data-feather="menu"></i>
+                            </a>
+                        </li>
+                    </ul>
+                    <div class="search-element">
+                        <a href="https://cashcrown.org/" target="_blank" class="gr-bg-1 text-white text-decoration-none p-2 rounded">
+                            <i class="fas fa-globe-africa mr-2"></i><span class="font-weight-bold">Visit site</span>
+                        </a>
+                    </div>
+                </form>
+                <ul class="navbar-nav navbar-right">
+                    <li class="dropdown dropdown-list-toggle">
+                        <a href="#" data-toggle="dropdown" class="nav-link notification-toggle nav-link-lg beep">
+                            <i data-feather="bell"></i>
+                        </a>
+                        <div class="dropdown-menu dropdown-list dropdown-menu-right">
+                            <div class="dropdown-header">Notifications
+                                <div class="float-right">
+                                    <a href="/mark-as-read">Mark all as read</a>
+                                </div>
+                            </div>
+                            <div class="dropdown-list-content dropdown-list-icons">
+                                <div class="dropdown-item text-center">
+                                    <div class="dropdown-item-icon bg-light text-muted">
+                                        <i class="fas fa-bell-slash"></i>
+                                    </div>
+                                    <div class="dropdown-item-desc">
+                                        No notifications yet
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                    <li class="dropdown">
+                        <a href="#" data-toggle="dropdown" class="nav-link dropdown-toggle nav-link-lg nav-link-user d-flex align-items-center">
+                            <span class="text-capitalize">Hi, admin</span>
+                        </a>
+                        <div class="dropdown-menu dropdown-menu-right">
+                            <a href="/profile" class="dropdown-item has-icon">
+                                <i class="far fa-user"></i> Profile
+                            </a>
+                            <a href="/logout" class="dropdown-item has-icon text-danger">
+                                <i class="fas fa-sign-out-alt"></i> Logout
+                            </a>
+                        </div>
+                    </li>
+                </ul>
+            </nav>
+
+            <!-- Sidebar -->
+            <div class="main-sidebar">
+                <aside id="sidebar-wrapper">
+                    <div class="sidebar-brand">
+                        <a href="/dashboard">Cash Crown</a>
+                    </div>
+            
+                    <ul class="sidebar-menu">
+            
+                        <li class="nav-item dropdown">
+                            <a href="/dashboard" class="nav-link">
+                                <i data-feather="home"></i>
+                                <span>Dashboard</span>
+                            </a>
+                        </li>
+            
+                        <li class="sidebar-menu-caption">User Management</li>
+            
+                        <li class="nav-item">
+                            <a class="nav-link" href="/users">
+                                <i data-feather="user"></i>
+                                <span>Manage users</span>
+                            </a>
+                        </li>
+            
+                        <!-- <li class="nav-item">
+                            <a class="nav-link" href="/ticket">
+                                <i data-feather="user"></i>
+                                <span>Support</span>
+                            </a>
+                        </li> -->
+            
+                        <li class="sidebar-menu-caption">Payment and Payout</li>
+            
+                        <li class="nav-item dropdown">
+                            <a href="#" class="nav-link has-dropdown" data-toggle="dropdown">
+                                <i data-feather="database"></i>
+                                <span>Manual payments</span>
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li>
+                                    <a class="nav-link" href="/pending-payments">Pending payments</a>
+                                </li>
+                                <li>
+                                    <a class="nav-link" href="/rejected-payments">Rejected payments</a>
+                                </li>
+                                <li>
+                                    <a class="nav-link" href="/accepted-payments">Accepted payments</a>
+                                </li>
+                            </ul>
+                        </li>
+            
+                        <li class="nav-item dropdown active">
+                            <a href="#" class="nav-link has-dropdown" data-toggle="dropdown">
+                                <i data-feather="package"></i>
+                                <span>Manage withdraw</span>
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li>
+                                    <a class="nav-link" href="/withdraw-pending">Pending withdraws</a>
+                                </li>
+                                <li class="active">
+                                    <a class="nav-link" href="/withdraw-rejected">Rejected withdraws</a>
+                                </li>
+                                <li>
+                                    <a class="nav-link" href="/withdraw-accepted">Accepted withdraws</a>
+                                </li>
+                            </ul>
+                        </li>
+            
+                    </ul>
+                </aside>
+            </div>
+
+            <!-- Main Content -->
+            <div class="main-content">
+                <section class="section">
+                    <div class="section-header">
+                        <h1>Manual Withdraw</h1>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-12 col-md-12 col-lg-12">
+                            <div class="card">
+                                <div class="card-body p-0">
+                                    <div class="table-responsive">
+                                        <table class="table table-striped" id="withdrawalsTable">
+                                            <thead>
+                                                <tr>
+                                                    <th>Sl</th>
+                                                    <th>User</th>
+                                                    <th>Amount</th>
+                                                    <th>TID</th>
+                                                    <th>Date</th>
+                                                    <th>Status</th>
+                                                    <th>Action</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <!-- Data will be populated here by JavaScript -->
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+
+        </div>
+    </div>
+
+
+<!-- Details Modal -->
+<div class="modal fade" id="detailsModal" tabindex="-1" role="dialog" aria-labelledby="detailsModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="detailsModalLabel">Details</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <!-- Content will be injected here by JavaScript -->
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+    <!-- General JS Scripts -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="asset/admin/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/izitoast/1.4.0/js/iziToast.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/feather-icons@4.28.0/dist/feather.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.nicescroll/3.7.6/jquery.nicescroll.min.js"></script>
+    <script src="asset/admin/js/scripts.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.4/dist/Chart.min.js"></script>
+
+    <script>
+        $(document).ready(function () {
+            // Fetch rejected withdrawals
+            $.ajax({
+                url: '/withdraws/status',
+                method: 'GET',
+                data: { status: 'rejected' },
+                success: function (data) {
+                    const tbody = $('#withdrawalsTable tbody');
+                    tbody.empty(); // Clear existing data
+        
+                    // Check if data is empty
+                    if (data.length === 0) {
+                        tbody.append('<tr><td colspan="7" class="text-center">No rejected withdrawals found.</td></tr>');
+                        return;
+                    }
+        
+                    // Populate the table with fetched data
+                    data.forEach((item, index) => {
+                        tbody.append(`
+                            <tr>
+                                <td>${index + 1}</td>
+                                <td>${item.username}</td>
+                                <td>$${item.amount}</td>
+                                <td>${item.TID}</td>
+                                <td>${new Date(item.timestamp).toLocaleDateString()}</td>
+                                <td><span class="badge badge-danger">Rejected</span></td>
+                                <td>
+                                    <button class="btn btn-md btn-info details" withdraw-id="${item._id}">Details</button>
+                                </td>
+                            </tr>
+                        `);
+                    });
+                },
+                error: function (xhr, status, error) {
+                    console.error(error);
+                    iziToast.error({
+                        title: 'Error',
+                        message: 'Could not fetch rejected withdrawals!',
+                        position: 'topRight'
+                    });
+                }
+            });
+        
+            // Handle Details button click
+            $(document).on('click', '.details', function () {
+                const withdrawId = $(this).attr('withdraw-id');
+        
+                // Fetch details for the selected withdrawal
+                $.ajax({
+                    url: `/withdraws/${withdrawId}`,
+                    method: 'GET',
+                    success: function (item) {
+                        // Prepare the modal content
+                        const modalContent = `
+                            <div class="modal-header">
+                                <h5 class="modal-title">TID: ${item.TID}</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <p><strong>Username:</strong> ${item.username}</p>
+                                <p><strong>Wallet Address:</strong> ${item.walletAddress}</p>
+                                <p><strong>Amount:</strong> $${item.amount}</p>
+                                <p><strong>Withdraw Date:</strong> ${new Date(item.timestamp).toLocaleDateString()}</p>
+                                <p><strong>Reject Date:</strong> ${new Date(item.rejectDate).toLocaleDateString()}</p>
+                                <p><strong>Status:</strong> <span class="badge badge-danger">Pending</span></p>
+                                <p><strong>Note:</strong> ${item.note}</p>
+                            </div>
+                        `;
+        
+                        // Set modal content and show the modal
+                        $('#detailsModal .modal-content').html(modalContent);
+                        $('#detailsModal').modal('show');
+                    },
+                    error: function (xhr, status, error) {
+                        console.error(error);
+                        iziToast.error({
+                            title: 'Error',
+                            message: 'Could not fetch withdrawal details!',
+                            position: 'topRight'
+                        });
+                    }
+                });
+            });
+        
+
+        });
+    </script>
+     
+    
+</body>
+
+</html>

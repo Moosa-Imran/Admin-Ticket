@@ -1,0 +1,234 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta content="width=device-width, initial-scale=1, maximum-scale=1, shrink-to-fit=no" name="viewport">
+    <title>Dashboard</title>
+
+    <!-- General CSS Files -->
+    <link rel="stylesheet" href="asset/admin/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/izitoast/1.4.0/css/iziToast.css">
+    <link rel="stylesheet" href="asset/admin/css/style.css">
+    <link rel="stylesheet" href="asset/admin/css/components.css">
+    <link rel="stylesheet" href="asset/admin/css/custom.css">
+
+
+    </head>
+
+<body>
+    <div id="app">
+        <div class="main-wrapper">
+            <div id="overlay">
+                <div class="cv-spinner">
+                    <span class="spinner"></span>
+                </div>
+            </div>
+            <!-- Navbar -->
+            <%- include('components/navbar') %>
+            <!-- Sidebar -->
+            <%- include('components/sidebar') %>
+            
+                <div class="main-content">
+        <section class="section">
+            
+            
+            <div class="section-header pl-0 d-flex justify-content-between">
+                <h1 class="pl-0">Dashboard</h1>
+                <h4>
+                                           
+                                    </h4>
+            </div>
+                                    
+
+
+            <div class="row"> 
+                <div class="custom-xxxl-3 custom-xxl-4 col-md-6 col-sm-6 col-12 mb-4">
+                    <div class="card-stat gr-bg-1">
+                        <div class="icon">
+                            <i class="fas fa-money-bill-wave-alt"></i>
+                        </div>
+                        <div class="content">
+                            <p class="caption">Total Payemnts</p>
+                            <h4 class="card-stat-amount"><span id="total_invest">0</span> $</h4>
+                        </div>
+                    </div>
+                </div>
+                <div class="custom-xxxl-3 custom-xxl-4 col-md-6 col-sm-6 col-12 mb-4">
+                    <div class="card-stat gr-bg-2">
+                        <div class="icon">
+                            <i class="fas fa-spinner"></i>
+                        </div>
+                        <div class="content">
+                            <p class="caption">Total pending Payments</p>
+                            <h4 class="card-stat-amount"><span id="pending_invest">0</span> $</h4>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="custom-xxxl-3 custom-xxl-4 col-md-6 col-sm-6 col-12 mb-4">
+                    <div class="card-stat gr-bg-3">
+                        <div class="icon">
+                            <i class="fas fa-spinner"></i>
+                        </div>
+                        <div class="content">
+                            <p class="caption">Total paid amount</p>
+                            <h4 class="card-stat-amount"><span id="total_profit">0</span> $</h4>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="custom-xxxl-3 custom-xxl-4 col-md-6 col-sm-6 col-12 mb-4">
+                    <div class="card-stat gr-bg-4">
+                        <div class="icon">
+                            <i class="far fa-user"></i>
+                        </div>
+                        <div class="content">
+                            <p class="caption">Total user</p>
+                            <h4 class="card-stat-amount"><span id="total_users">0</span></h4>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="custom-xxxl-3 custom-xxl-4 col-md-6 col-sm-6 col-12 mb-4">
+                    <div class="card-stat gr-bg-5">
+                        <div class="icon">
+                            <i class="fas fa-user-tie"></i>
+                        </div>
+                        <div class="content">
+                            <p class="caption">Total active user</p>
+                            <h4 class="card-stat-amount"><span id="active_users">0</span></h4>
+                        </div>
+                    </div>
+                </div>
+                <div class="custom-xxxl-3 custom-xxl-4 col-md-6 col-sm-6 col-12 mb-4">
+                    <div class="card-stat gr-bg-6">
+                        <div class="icon">
+                            <i class="fas fa-user-times"></i>
+                        </div>
+                        <div class="content">
+                            <p class="caption">Total deactived user</p>
+                            <h4 class="card-stat-amount"><span id="deactive_users">0</span></h4>
+                        </div>
+                    </div>
+                </div>
+                <!-- <div class="custom-xxxl-3 custom-xxl-4 col-md-6 col-sm-6 col-12 mb-4">
+                    <div class="card-stat gr-bg-7">
+                        <div class="icon">
+                            <i class="fas fa-hand-holding-usd"></i>
+                        </div>
+                        <div class="content">
+                            <p class="caption">Total withdraw</p>
+                            <h4 class="card-stat-amount"><span id="total_withdraw">0</span> $</h4>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="custom-xxxl-3 custom-xxl-4 col-md-6 col-sm-6 col-12 mb-4">
+                    <div class="card-stat gr-bg-8">
+                        <div class="icon">
+                            <i class="fas fa-hand-holding-usd"></i>
+                        </div>
+                        <div class="content">
+                            <p class="caption">Total pending withdraw</p>
+                            <h4 class="card-stat-amount"><span id="pending_withdraw">0</span> $</h4>
+                        </div>
+                    </div>
+                </div> -->
+            </div>
+
+        </section>
+    </div>
+        </div>
+    </div>
+
+    
+    <!-- General JS Scripts -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="asset/admin/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/izitoast/1.4.0/js/iziToast.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/feather-icons@4.28.0/dist/feather.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.nicescroll/3.7.6/jquery.nicescroll.min.js"></script>
+    <script src="asset/admin/js/scripts.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.4/dist/Chart.min.js"></script> 
+    
+    <script>
+        $(document).ready(function () {
+    // Fetch and update all data when the page loads
+    // fetchAndCalculateData();
+
+    function fetchAndCalculateData() {
+        // Fetch data from all three routes concurrently
+        Promise.all([
+            fetch('/allusers').then(res => res.json()),
+            fetch('/investments').then(res => res.json()),
+            fetch('/withdrawals').then(res => res.json())
+        ])
+        .then(([users, investments, withdrawals]) => {
+            // Initialize counters
+            let totalUsers = 0;
+            let totalProfit = 0;
+            let activeUsers = 0;
+            let deactiveUsers = 0;
+            let totalInvest = 0;
+            let pendingInvest = 0;
+            let totalWithdraw = 0;
+            let pendingWithdraw = 0;
+
+            // Process users data
+            totalUsers = users.length;
+            users.forEach(user => {
+                totalProfit += user.profit || 0;
+                if (user.active) {
+                    activeUsers++;
+                } else {
+                    deactiveUsers++;
+                }
+            });
+
+            // Process investments data
+            investments.forEach(investment => {
+                if (investment.status === 'active' || investment.status === 'canceled') {
+                    totalInvest += investment.amount || 0;
+                } else if (investment.status === 'pending') {
+                    pendingInvest += investment.amount || 0;
+                }
+            });
+
+            // Process withdrawals data
+            withdrawals.forEach(withdrawal => {
+                if (withdrawal.status === 'completed') {
+                    totalWithdraw += withdrawal.amount || 0;
+                } else if (withdrawal.status === 'pending') {
+                    pendingWithdraw += withdrawal.amount || 0;
+                }
+            });
+
+            // Update HTML elements with calculated values
+            $('#total_users').text(totalUsers);
+            $('#total_profit').text(`${totalProfit}`);
+            $('#active_users').text(activeUsers);
+            $('#deactive_users').text(deactiveUsers);
+            $('#total_invest').text(`${totalInvest}`);
+            $('#pending_invest').text(`${pendingInvest}`);
+            $('#total_withdraw').text(`${totalWithdraw}`);
+            $('#pending_withdraw').text(`${pendingWithdraw}`);
+        })
+        .catch(error => {
+            console.error('Error fetching data:', error);
+            iziToast.error({
+                title: 'Error',
+                message: 'Could not fetch data',
+                position: 'topRight'
+            });
+        });
+    }
+});
+
+    </script>
+    
+</body>
+
+</html>
