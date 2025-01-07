@@ -25,139 +25,15 @@
             </div>
 
             <!-- Navbar -->
-            <nav class="navbar navbar-expand-lg main-navbar">
-                <form class="form-inline mr-auto">
-                    <ul class="navbar-nav mr-3">
-                        <li class="bars-icon-navbar">
-                            <a href="#" data-toggle="sidebar" class="nav-link nav-link-lg">
-                                <i data-feather="menu"></i>
-                            </a>
-                        </li>
-                    </ul>
-                    <div class="search-element">
-                        <a href="https://cashcrown.org/" target="_blank" class="gr-bg-1 text-white text-decoration-none p-2 rounded">
-                            <i class="fas fa-globe-africa mr-2"></i><span class="font-weight-bold">Visit site</span>
-                        </a>
-                    </div>
-                </form>
-                <ul class="navbar-nav navbar-right">
-                    <li class="dropdown dropdown-list-toggle">
-                        <a href="#" data-toggle="dropdown" class="nav-link notification-toggle nav-link-lg beep">
-                            <i data-feather="bell"></i>
-                        </a>
-                        <div class="dropdown-menu dropdown-list dropdown-menu-right">
-                            <div class="dropdown-header">Notifications
-                                <div class="float-right">
-                                    <a href="/mark-as-read">Mark all as read</a>
-                                </div>
-                            </div>
-                            <div class="dropdown-list-content dropdown-list-icons">
-                                <div class="dropdown-item text-center">
-                                    <div class="dropdown-item-icon bg-light text-muted">
-                                        <i class="fas fa-bell-slash"></i>
-                                    </div>
-                                    <div class="dropdown-item-desc">
-                                        No notifications yet
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </li>
-                    <li class="dropdown">
-                        <a href="#" data-toggle="dropdown" class="nav-link dropdown-toggle nav-link-lg nav-link-user d-flex align-items-center">
-                            <span class="text-capitalize">Hi, admin</span>
-                        </a>
-                        <div class="dropdown-menu dropdown-menu-right">
-                            <a href="/profile" class="dropdown-item has-icon">
-                                <i class="far fa-user"></i> Profile
-                            </a>
-                            <a href="/logout" class="dropdown-item has-icon text-danger">
-                                <i class="fas fa-sign-out-alt"></i> Logout
-                            </a>
-                        </div>
-                    </li>
-                </ul>
-            </nav>
-
+            <%- include('components/navbar') %>
             <!-- Sidebar -->
-            <div class="main-sidebar">
-                <aside id="sidebar-wrapper">
-                    <div class="sidebar-brand">
-                        <a href="/dashboard">Cash Crown</a>
-                    </div>
-            
-                    <ul class="sidebar-menu">
-            
-                        <li class="nav-item dropdown">
-                            <a href="/dashboard" class="nav-link">
-                                <i data-feather="home"></i>
-                                <span>Dashboard</span>
-                            </a>
-                        </li>
-            
-                        <li class="sidebar-menu-caption">User Management</li>
-            
-                        <li class="nav-item">
-                            <a class="nav-link" href="/users">
-                                <i data-feather="user"></i>
-                                <span>Manage users</span>
-                            </a>
-                        </li>
-            
-                        <!-- <li class="nav-item">
-                            <a class="nav-link" href="/ticket">
-                                <i data-feather="user"></i>
-                                <span>Support</span>
-                            </a>
-                        </li> -->
-            
-                        <li class="sidebar-menu-caption">Payment and Payout</li>
-            
-                        <li class="nav-item dropdown active">
-                            <a href="#" class="nav-link has-dropdown" data-toggle="dropdown">
-                                <i data-feather="database"></i>
-                                <span>Manual payments</span>
-                            </a>
-                            <ul class="dropdown-menu">
-                                <li>
-                                    <a class="nav-link" href="/pending-payments">Pending payments</a>
-                                </li>
-                                <li>
-                                    <a class="nav-link" href="/rejected-payments">Rejected payments</a>
-                                </li>
-                                <li class="active">
-                                    <a class="nav-link" href="/accepted-payments">Accepted payments</a>
-                                </li>
-                            </ul>
-                        </li>
-            
-                        <li class="nav-item dropdown">
-                            <a href="#" class="nav-link has-dropdown" data-toggle="dropdown">
-                                <i data-feather="package"></i>
-                                <span>Manage withdraw</span>
-                            </a>
-                            <ul class="dropdown-menu">
-                                <li>
-                                    <a class="nav-link" href="/withdraw-pending">Pending withdraws</a>
-                                </li>
-                                <li>
-                                    <a class="nav-link" href="/withdraw-rejected">Rejected withdraws</a>
-                                </li>
-                                <li>
-                                    <a class="nav-link" href="/withdraw-accepted">Accepted withdraws</a>
-                                </li>
-                            </ul>
-                        </li>
-            
-                    </ul>
-                </aside>
-            </div>
+            <%- include('components/sidebar') %>
 
             <!-- Main Content -->
             <div class="main-content">
                 <section class="section">
                     <div class="section-header">
-                        <h1>Manual Payments</h1>
+                        <h1>Resolved Tickets</h1>
                     </div>
 
                     <div class="row">
@@ -261,7 +137,7 @@
                     console.error(error);
                     iziToast.error({
                         title: 'Error',
-                        message: 'Could not fetch accepted payments!',
+                        message: 'Could not fetch resolved Tickets!',
                         position: 'topRight'
                     });
                 }

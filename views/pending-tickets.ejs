@@ -25,140 +25,16 @@
             </div>
 
             <!-- Navbar -->
-            <nav class="navbar navbar-expand-lg main-navbar">
-                <form class="form-inline mr-auto">
-                    <ul class="navbar-nav mr-3">
-                        <li class="bars-icon-navbar">
-                            <a href="#" data-toggle="sidebar" class="nav-link nav-link-lg">
-                                <i data-feather="menu"></i>
-                            </a>
-                        </li>
-                    </ul>
-                    <div class="search-element">
-                        <a href="https://cashcrown.org/" target="_blank" class="gr-bg-1 text-white text-decoration-none p-2 rounded">
-                            <i class="fas fa-globe-africa mr-2"></i><span class="font-weight-bold">Visit site</span>
-                        </a>
-                    </div>
-                </form>
-                <ul class="navbar-nav navbar-right">
-                    <li class="dropdown dropdown-list-toggle">
-                        <a href="#" data-toggle="dropdown" class="nav-link notification-toggle nav-link-lg beep">
-                            <i data-feather="bell"></i>
-                        </a>
-                        <div class="dropdown-menu dropdown-list dropdown-menu-right">
-                            <div class="dropdown-header">Notifications
-                                <div class="float-right">
-                                    <a href="/mark-as-read">Mark all as read</a>
-                                </div>
-                            </div>
-                            <div class="dropdown-list-content dropdown-list-icons">
-                                <div class="dropdown-item text-center">
-                                    <div class="dropdown-item-icon bg-light text-muted">
-                                        <i class="fas fa-bell-slash"></i>
-                                    </div>
-                                    <div class="dropdown-item-desc">
-                                        No notifications yet
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </li>
-                    <li class="dropdown">
-                        <a href="#" data-toggle="dropdown" class="nav-link dropdown-toggle nav-link-lg nav-link-user d-flex align-items-center">
-                            <span class="text-capitalize">Hi, admin</span>
-                        </a>
-                        <div class="dropdown-menu dropdown-menu-right">
-                            <a href="/profile" class="dropdown-item has-icon">
-                                <i class="far fa-user"></i> Profile
-                            </a>
-                            <a href="/logout" class="dropdown-item has-icon text-danger">
-                                <i class="fas fa-sign-out-alt"></i> Logout
-                            </a>
-                        </div>
-                    </li>
-                </ul>
-            </nav>
-
+            <%- include('components/navbar') %>
             <!-- Sidebar -->
-            <div class="main-sidebar">
-                <aside id="sidebar-wrapper">
-                    <div class="sidebar-brand">
-                        <a href="/dashboard">Cash Crown</a>
-                    </div>
-            
-                    <ul class="sidebar-menu">
-            
-                        <li class="nav-item dropdown">
-                            <a href="/dashboard" class="nav-link">
-                                <i data-feather="home"></i>
-                                <span>Dashboard</span>
-                            </a>
-                        </li>
-            
-                        <li class="sidebar-menu-caption">User Management</li>
-            
-                        <li class="nav-item">
-                            <a class="nav-link" href="/users">
-                                <i data-feather="user"></i>
-                                <span>Manage users</span>
-                            </a>
-                        </li>
-            
-                        <!-- <li class="nav-item">
-                            <a class="nav-link" href="/ticket">
-                                <i data-feather="user"></i>
-                                <span>Support</span>
-                            </a>
-                        </li> -->
-            
-                        <li class="sidebar-menu-caption">Payment and Payout</li>
-            
-                        <li class="nav-item dropdown">
-                            <a href="#" class="nav-link has-dropdown" data-toggle="dropdown">
-                                <i data-feather="database"></i>
-                                <span>Manual payments</span>
-                            </a>
-                            <ul class="dropdown-menu">
-                                <li>
-                                    <a class="nav-link" href="/pending-payments">Pending payments</a>
-                                </li>
-                                <li>
-                                    <a class="nav-link" href="/rejected-payments">Rejected payments</a>
-                                </li>
-                                <li>
-                                    <a class="nav-link" href="/accepted-payments">Accepted payments</a>
-                                </li>
-                            </ul>
-                        </li>
-            
-                        <li class="nav-item dropdown active">
-                            <a href="#" class="nav-link has-dropdown" data-toggle="dropdown">
-                                <i data-feather="package"></i>
-                                <span>Manage withdraw</span>
-                            </a>
-                            <ul class="dropdown-menu">
-                                <li class="active">
-                                    <a class="nav-link" href="/withdraw-pending">Pending withdraws</a>
-                                </li>
-                                <li>
-                                    <a class="nav-link" href="/withdraw-rejected">Rejected withdraws</a>
-                                </li>
-                                <li>
-                                    <a class="nav-link" href="/withdraw-accepted">Accepted withdraws</a>
-                                </li>
-                            </ul>
-                        </li>
-            
-                    </ul>
-                </aside>
-            </div>
+            <%- include('components/sidebar') %>
             
 
             <!-- Main Content -->
             <div class="main-content">
                 <section class="section">
                     <div class="section-header">
-                        <h1>Manage Withdraw</h1>
+                        <h1>Pending Tickets</h1>
                     </div>
 
                     <div class="row">
@@ -231,10 +107,9 @@
                 </button>
             </div>
             <div class="modal-body">
-                <p>Are you sure you want to reject this withdraw?</p>
+                <p>Are you sure you want to reject this payment?</p>
                 <label for="rejectComment">Comment</label>
-                <textarea id="rejectComment" class="form-control" rows="2" placeholder="Enter a comment">Wallet Address is Incorrect!</textarea>
-                <p class="text-danger font-weight-bold mt-2">This process is irreversible.</p>
+                <textarea id="rejectComment" class="form-control" rows="2" placeholder="Enter a comment">Sorry! We can't Verify</textarea>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
@@ -277,9 +152,9 @@
 
     <script>
         $(document).ready(function () {
-            // Fetch pending withdraws
+            // Fetch pending payments
             $.ajax({
-                url: '/withdraws/status',
+                url: '/investments/status',
                 method: 'GET',
                 data: { status: 'pending' },
                 success: function (data) {
@@ -288,7 +163,7 @@
     
                     // Check if data is empty
                     if (data.length === 0) {
-                        tbody.append('<tr><td colspan="7" class="text-center">No pending withdraws found.</td></tr>');
+                        tbody.append('<tr><td colspan="7" class="text-center">No pending payments found.</td></tr>');
                         return;
                     }
     
@@ -303,9 +178,9 @@
                                 <td>${new Date(item.timestamp).toLocaleDateString()}</td>
                                 <td><span class="badge badge-warning">Pending</span></td>
                                 <td>
-                                    <button class="btn btn-md btn-info details" data-withdraw-id="${item._id}">Details</button>
-                                    <button class="btn text-white btn-md btn-primary accept" data-withdraw-id="${item._id}">Accept</button>
-                                    <button class="btn text-white btn-md btn-danger reject" data-withdraw-id="${item._id}">Reject</button>
+                                    <button class="btn btn-md btn-info details" invest-id="${item._id}">Details</button>
+                                    <button class="btn text-white btn-md btn-primary accept" invest-id="${item._id}">Accept</button>
+                                    <button class="btn text-white btn-md btn-danger reject" invest-id="${item._id}">Reject</button>
                                 </td>
                             </tr>
                         `);
@@ -315,7 +190,7 @@
                     console.error(error);
                     iziToast.error({
                         title: 'Error',
-                        message: 'Could not fetch pending withdraws!',
+                        message: 'Could not fetch pending tickets!',
                         position: 'topRight'
                     });
                 }
@@ -323,25 +198,26 @@
     
             // Handle Accept button click
             $(document).on('click', '.accept', function () {
-                const withdrawId = $(this).data('withdraw-id'); // Get withdraw ID
-                $('#confirmModal').data('withdraw-id', withdrawId).modal('show'); // Store ID in modal data
+                const investId = $(this).attr('invest-id'); // Get investment ID
+                $('#confirmModal').data('invest-id', investId).modal('show'); // Store ID in modal data
             });
     
             // Handle Reject button click
             $(document).on('click', '.reject', function () {
-                const withdrawId = $(this).data('withdraw-id'); // Get withdraw ID
-                $('#rejectModal').data('withdraw-id', withdrawId).modal('show'); // Store ID in modal data
+                const investId = $(this).attr('invest-id'); // Get investment ID
+                $('#rejectModal').data('invest-id', investId).modal('show'); // Store ID in modal data
             });
     
             // Handle Details button click
             $(document).on('click', '.details', function () {
-                const withdrawId = $(this).data('withdraw-id');
+                const investId = $(this).attr('invest-id');
     
-                // Fetch details for the selected withdraw
+                // Fetch details for the selected investment
                 $.ajax({
-                    url: `/withdraws/${withdrawId}`,
+                    url: `/investments/${investId}`,
                     method: 'GET',
                     success: function (item) {
+                        let imgPath = `https://cashcrown.org/${item.screenshot.slice(7)}`;
                         // Prepare the modal content
                         const modalContent = `
                             <div class="modal-header">
@@ -352,11 +228,16 @@
                             </div>
                             <div class="modal-body">
                                 <p><strong>Username:</strong> ${item.username}</p>
-                                <p><strong>Wallet Address:</strong> ${item.walletAddress}</p>
+                                <p><strong>Transaction Hash:</strong> ${item.transactionHash}</p>
+                                <p><strong>Plan:</strong> ${item.plan.charAt(0).toUpperCase() + item.plan.slice(1)}</p>
                                 <p><strong>Amount:</strong> $${item.amount}</p>
-                                <p><strong>Withdraw Date:</strong> ${new Date(item.timestamp).toLocaleDateString()}</p>
+                                <p><strong>Date:</strong> ${new Date(item.timestamp).toLocaleDateString()}</p>
                                 <p><strong>Status:</strong> <span class="badge badge-warning">Pending</span></p>
-                                <p><strong>Note:</strong> ${item.note}</p>
+                                <p><strong>Screenshot:</strong></p>
+                                <img src="${imgPath}" alt="Screenshot" class="img-fluid" style="max-height: 300px; object-fit: cover;">
+                                <div class="mt-2">
+                                    <a href="${imgPath}" target="_blank" class="btn btn-primary">Open Image in New Tab</a>
+                                </div>
                             </div>
                         `;
     
@@ -368,7 +249,7 @@
                         console.error(error);
                         iziToast.error({
                             title: 'Error',
-                            message: 'Could not fetch withdraw details!',
+                            message: 'Could not fetch payment details!',
                             position: 'topRight'
                         });
                     }
@@ -377,7 +258,7 @@
     
             // Handle Confirm Accept button click
             $('#confirmAccept').on('click', function () {
-                const withdrawId = $('#confirmModal').data('withdraw-id'); // Retrieve withdraw ID
+                const investId = $('#confirmModal').data('invest-id'); // Retrieve investment ID
                 const comment = $('#confirmComment').val();
                 
                 if (comment.trim() === "") {
@@ -389,24 +270,25 @@
                     return;
                 }
     
-                // Call the withdraw control route
+                // Call the investment control route
                 $.ajax({
-                    url: `/withdrawControl/${withdrawId}?status=active&comment=${encodeURIComponent(comment)}`,
+                    url: `/investmentControl/${investId}?status=active&comment=${encodeURIComponent(comment)}`,
                     method: 'PUT',
                     success: function (response) {
                         $('#confirmModal').modal('hide'); // Hide the confirm modal
                         iziToast.success({
                             title: 'Success',
-                            message: 'Withdraw accepted successfully!',
+                            message: 'Payment accepted successfully!',
                             position: 'topRight'
                         });
+                        // Optionally, refresh the payments table or remove the row
                         location.reload(); // Reload the page to refresh the table
                     },
                     error: function (xhr, status, error) {
                         console.error(error);
                         iziToast.error({
                             title: 'Error',
-                            message: 'Could not accept the withdraw!',
+                            message: 'Could not accept the payment!',
                             position: 'topRight'
                         });
                     }
@@ -415,8 +297,9 @@
     
             // Handle Confirm Reject button click
             $('#confirmReject').on('click', function () {
-                const withdrawId = $('#rejectModal').data('withdraw-id'); // Retrieve withdraw ID
+                const investId = $('#rejectModal').data('invest-id'); // Retrieve investment ID
                 const comment = $('#rejectComment').val();
+                
                 if (comment.trim() === "") {
                     iziToast.error({
                         title: 'Error',
@@ -428,22 +311,23 @@
     
                 // Call the investment control route
                 $.ajax({
-                    url: `/withdrawControl/${withdrawId}?status=rejected&comment=${encodeURIComponent(comment)}`,
+                    url: `/investmentControl/${investId}?status=rejected&comment=${encodeURIComponent(comment)}`,
                     method: 'PUT',
                     success: function (response) {
                         $('#rejectModal').modal('hide'); // Hide the reject modal
                         iziToast.success({
                             title: 'Rejected',
-                            message: 'Withdraw rejected successfully!',
+                            message: 'Payment rejected successfully!',
                             position: 'topRight'
                         });
+                        // Optionally, refresh the payments table or remove the row
                         location.reload(); // Reload the page to refresh the table
                     },
                     error: function (xhr, status, error) {
                         console.error(error);
                         iziToast.error({
                             title: 'Error',
-                            message: 'Could not reject the withdraw!',
+                            message: 'Could not reject the payment!',
                             position: 'topRight'
                         });
                     }
@@ -451,6 +335,7 @@
             });
         });
     </script>
+    
     
     
     

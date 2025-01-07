@@ -499,33 +499,20 @@ router.get('/dashboard', isAuthenticated, (req, res) => {
     res.render('dashboard');
 });
 
-router.get('/pending-payments', isAuthenticated, (req, res) => {
-    res.sendFile(path.join(__dirname, 'dist', 'pending-payments.html'));
-});
-
-router.get('/accepted-payments', isAuthenticated, (req, res) => {
-    res.sendFile(path.join(__dirname, 'dist', 'accepted-payments.html'));
-});
-
-router.get('/rejected-payments', isAuthenticated, (req, res) => {
-    res.sendFile(path.join(__dirname, 'dist', 'rejected-payments.html'));
-});
-
-router.get('/withdraw-pending', isAuthenticated, (req, res) => {
-    res.sendFile(path.join(__dirname, 'dist', 'withdraw-pending.html'));
-});
-
-router.get('/withdraw-rejected', isAuthenticated, (req, res) => {
-    res.sendFile(path.join(__dirname, 'dist', 'withdraw-rejected.html'));
-});
-
-router.get('/withdraw-accepted', isAuthenticated, (req, res) => {
-    res.sendFile(path.join(__dirname, 'dist', 'withdraw-accepted.html'));
-});
-
 router.get('/users', isAuthenticated, (req, res) => {
-    res.sendFile(path.join(__dirname, 'dist', 'users.html'));
+    res.render('users');
+
 });
+
+router.get('/pending-tickets', isAuthenticated, (req, res) => {
+    res.render('pending-tickets');
+});
+
+router.get('/resolved-tickets', isAuthenticated, (req, res) => {
+    res.render('resolved-tickets');
+});
+
+
 
 
 module.exports = router;
