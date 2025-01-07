@@ -117,7 +117,7 @@ router.post('/login', async (req, res) => {
     const usersDb = req.app.locals.usersDb;
     try {
         // Search for the user by username or email
-        const user = await usersDb.collection('Managment').findOne({username: username});
+        const user = await usersDb.collection('Admin').findOne({username: username});
 
         // If user is not found
         if (!user) {
