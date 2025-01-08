@@ -6,8 +6,11 @@ const session = require('express-session');
 const PORT = 3005;
 require('dotenv').config();
 
+
+
 const mongoUri = process.env.MONGO_URI;
 const app = express();
+
 
 app.enable('trust proxy');
 
@@ -19,7 +22,7 @@ app.use(session({
   store: MongoStore.create({
     mongoUrl: mongoUri,
     dbName: 'Sessions',
-    collectionName: 'Managment',
+    collectionName: 'Admin',
     ttl: 4 * 24 * 60 * 60,
   }),
   cookie: { 
@@ -50,9 +53,11 @@ MongoClient.connect(mongoUri)
     console.log('Connected to MongoDB');
 
     const usersDb = client.db('Users');
+    const ticketsDb = client.db('Tickets');
 
     // Store the database instances in app.locals for access in routes
     app.locals.usersDb = usersDb;
+    app.locals.ticketsDb = ticketsDb;
 
     // Import and use the routes
     const routes = require('./routes');

@@ -14,7 +14,11 @@
     <link rel="stylesheet" href="asset/admin/css/style.css">
     <link rel="stylesheet" href="asset/admin/css/components.css">
     <link rel="stylesheet" href="asset/admin/css/custom.css">
-
+<style>
+    a{
+        text-decoration: none !important;
+    }
+</style>
 
     </head>
 
@@ -47,29 +51,34 @@
 
             <div class="row"> 
                 <div class="custom-xxxl-3 custom-xxl-4 col-md-6 col-sm-6 col-12 mb-4">
+                    <a href="/pending-tickets">
                     <div class="card-stat gr-bg-2">
                         <div class="icon">
                             <i class="fas fa-spinner"></i>
                         </div>
                         <div class="content">
                             <p class="caption">Total pending tickets</p>
-                            <h4 class="card-stat-amount"><span id="pending_invest">0</span></h4>
+                            <h4 class="card-stat-amount"><span id="pending_tickets">0</span></h4>
                         </div>
                     </div>
+                </a>
                 </div>
                 <div class="custom-xxxl-3 custom-xxl-4 col-md-6 col-sm-6 col-12 mb-4">
+                    <a href="/resolved-tickets">
                     <div class="card-stat gr-bg-3">
                         <div class="icon">
                             <i class="fas fa-check"></i>
                         </div>
                         <div class="content">
                             <p class="caption">Total resolved tickets</p>
-                            <h4 class="card-stat-amount"><span id="pending_invest">0</span></h4>
+                            <h4 class="card-stat-amount"><span id="resolved_tickets">0</span></h4>
                         </div>
                     </div>
+                </a>
                 </div>
 
                 <div class="custom-xxxl-3 custom-xxl-4 col-md-6 col-sm-6 col-12 mb-4">
+                    <a href="/users">
                     <div class="card-stat gr-bg-4">
                         <div class="icon">
                             <i class="far fa-user"></i>
@@ -79,9 +88,11 @@
                             <h4 class="card-stat-amount"><span id="total_users">0</span></h4>
                         </div>
                     </div>
+                </a>
                 </div>
 
                 <div class="custom-xxxl-3 custom-xxl-4 col-md-6 col-sm-6 col-12 mb-4">
+                    <a href="/users">
                     <div class="card-stat gr-bg-5">
                         <div class="icon">
                             <i class="fas fa-user-tie"></i>
@@ -91,8 +102,10 @@
                             <h4 class="card-stat-amount"><span id="active_users">0</span></h4>
                         </div>
                     </div>
+                </a>
                 </div>
                 <div class="custom-xxxl-3 custom-xxl-4 col-md-6 col-sm-6 col-12 mb-4">
+                    <a href="/users">
                     <div class="card-stat gr-bg-6">
                         <div class="icon">
                             <i class="fas fa-user-times"></i>
@@ -102,6 +115,7 @@
                             <h4 class="card-stat-amount"><span id="deactive_users">0</span></h4>
                         </div>
                     </div>
+                </a>
                 </div>
                 <!-- <div class="custom-xxxl-3 custom-xxl-4 col-md-6 col-sm-6 col-12 mb-4">
                     <div class="card-stat gr-bg-7">
@@ -146,64 +160,23 @@
     <script>
         $(document).ready(function () {
     // Fetch and update all data when the page loads
-    // fetchAndCalculateData();
+    fetchAndCalculateData();
 
     function fetchAndCalculateData() {
         // Fetch data from all three routes concurrently
         Promise.all([
             fetch('/allusers').then(res => res.json()),
-            fetch('/investments').then(res => res.json()),
-            fetch('/withdrawals').then(res => res.json())
+            fetch('/alltickets').then(res => res.json()),
         ])
-        .then(([users, investments, withdrawals]) => {
-            // Initialize counters
-            let totalUsers = 0;
-            let totalProfit = 0;
-            let activeUsers = 0;
-            let deactiveUsers = 0;
-            let totalInvest = 0;
-            let pendingInvest = 0;
-            let totalWithdraw = 0;
-            let pendingWithdraw = 0;
+        .then(([users, tickets]) => {
 
-            // Process users data
-            totalUsers = users.length;
-            users.forEach(user => {
-                totalProfit += user.profit || 0;
-                if (user.active) {
-                    activeUsers++;
-                } else {
-                    deactiveUsers++;
-                }
-            });
-
-            // Process investments data
-            investments.forEach(investment => {
-                if (investment.status === 'active' || investment.status === 'canceled') {
-                    totalInvest += investment.amount || 0;
-                } else if (investment.status === 'pending') {
-                    pendingInvest += investment.amount || 0;
-                }
-            });
-
-            // Process withdrawals data
-            withdrawals.forEach(withdrawal => {
-                if (withdrawal.status === 'completed') {
-                    totalWithdraw += withdrawal.amount || 0;
-                } else if (withdrawal.status === 'pending') {
-                    pendingWithdraw += withdrawal.amount || 0;
-                }
-            });
 
             // Update HTML elements with calculated values
-            $('#total_users').text(totalUsers);
-            $('#total_profit').text(`${totalProfit}`);
-            $('#active_users').text(activeUsers);
-            $('#deactive_users').text(deactiveUsers);
-            $('#total_invest').text(`${totalInvest}`);
-            $('#pending_invest').text(`${pendingInvest}`);
-            $('#total_withdraw').text(`${totalWithdraw}`);
-            $('#pending_withdraw').text(`${pendingWithdraw}`);
+            $('#total_users').text(users.length);
+            $('#deactive_users').text(users.length);
+            $('#pending_tickets').text(tickets.filter(ticket => ticket.status === 'Open').length);
+            $('#resolved_tickets').text(tickets.filter(ticket => ticket.status === 'Resolved').length);
+
         })
         .catch(error => {
             console.error('Error fetching data:', error);

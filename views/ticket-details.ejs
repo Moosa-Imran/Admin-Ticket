@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta content="width=device-width, initial-scale=1, maximum-scale=1, shrink-to-fit=no" name="viewport">
+    <title>Dashboard</title>
+
+    <!-- General CSS Files -->
+    <link rel="stylesheet" href="asset/admin/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/izitoast/1.4.0/css/iziToast.css">
+    <link rel="stylesheet" href="asset/admin/css/style.css">
+    <link rel="stylesheet" href="asset/admin/css/components.css">
+    <link rel="stylesheet" href="asset/admin/css/custom.css">
+
+
+</head>
+
+<body>
+    <div id="app">
+        <div class="main-wrapper">
+            <div id="overlay">
+                <div class="cv-spinner">
+                    <span class="spinner"></span>
+                </div>
+            </div>
+
+            <!-- Navbar -->
+            <%- include('components/navbar') %>
+                <!-- Sidebar -->
+                <%- include('components/sidebar') %>
+
+                    <div class="main-content">
+                        <section class="section">
+
+
+                            <main class="main p-4 md:ml-64 h-screen min-h-screen pt-20 bg-light">
+                                <div class="ticket-details bg-white rounded shadow-lg p-5">
+                                    <!-- Title -->
+                                    <h1 class="text-3xl font-weight-bold text-dark mb-4">Ticket Details</h1>
+
+                                    <!-- Ticket Information -->
+                                    <div class="ticket-info mt-4">
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <p><strong>Ticket Number:</strong>
+                                                    <%= ticket.ticketNo %>
+                                                </p>
+                                                <p><strong>Full Name:</strong>
+                                                    <%= ticket.fullName %>
+                                                </p>
+                                                <p><strong>Email:</strong>
+                                                    <%= ticket.email %>
+                                                </p>
+                                                <p><strong>Phone Number:</strong>
+                                                    <%= ticket.phoneNumber %>
+                                                </p>
+                                                <p><strong>Address:</strong>
+                                                    <%= ticket.address %>
+                                                </p>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <p><strong>Service Type:</strong>
+                                                    <%= ticket.serviceType %>
+                                                </p>
+                                                <p><strong>Sub-Service:</strong>
+                                                    <%= ticket.subService %>
+                                                </p>
+                                                <p><strong>Status:</strong>
+                                                    <%= ticket.status %>
+                                                </p>
+                                                <p><strong>Created At:</strong>
+                                                    <%= ticket.createdAt.toLocaleString() %>
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Chat Box -->
+                                    <div class="ticket-chat mt-5 mb-4">
+                                        <div class="chat-box" style="max-height: 400px; overflow-y: auto;">
+                                            <% ticket.conversation.forEach((message)=> { %>
+                                                <div
+                                                    class="chat-message <%= message.sender === 'customer' ? 'text-left' : 'text-right' %> mb-1">
+                                                    <div
+                                                        class="message bg-<%= message.sender === 'customer' ? 'primary' : 'success' %> text-white p-2 rounded-lg d-inline-block max-w-md">
+                                                        <p style="line-height: 12px !important"><strong>
+                                                                <%= message.sender==='customer' ? ticket.fullName
+                                                                    : 'Agent' %>:
+                                                            </strong></p>
+                                                        <p style="line-height: 12px !important">
+                                                            <%= message.message %>
+                                                        </p>
+                                                        <p style="line-height: 12px !important" class="text-xs text-white-400 mt-1">
+                                                            <%= new Date(message.timestamp).toLocaleString() %>
+                                                        </p> <!-- Displaying timestamp -->
+                                                    </div>
+                                                </div>
+                                                <% }) %>
+                                        </div>
+
+                                        <!-- New Message Input -->
+                                        <div class="mt-3">
+                                            <div class="form-group">
+                                                <input name="message"
+                                                    id="newMessage" class="form-control rounded-lg border-dark shadow-sm p-3"
+                                                    placeholder="Type your message..."></input>
+                                            </div>
+                                            <button onclick="sendMessage()"
+                                                class="btn btn-warning w-100 mt-2 py-2 rounded-lg shadow-md bg-blue-500 hover:bg-blue-700 transition duration-200">Send
+                                                Reply</button>
+                                        </div>
+                                    </div>
+
+
+                                    <!-- Resolve Button -->
+                                    <div class="resolve-ticket mt-4 d-flex justify-content-between">
+                                        <button onclick="resolveTicket()" class="btn btn-success w-100 py-3">Resolve Ticket</button>
+                                        <button class="btn btn-danger w-100 py-3"><a style="text-decoration: none; color: white;" href="/dashboard">Close Ticket</a></button>
+                                    </div>
+                                </div>
+                            </main>
+
+
+
+                        </section>
+                    </div>
+        </div>
+    </div>
+
+
+    <!-- General JS Scripts -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="asset/admin/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/izitoast/1.4.0/js/iziToast.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/feather-icons@4.28.0/dist/feather.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.nicescroll/3.7.6/jquery.nicescroll.min.js"></script>
+    <script src="asset/admin/js/scripts.js"></script>
+
+    <script>
+        function sendMessage() {
+        const message = document.getElementById('newMessage').value;
+        if (!message) return alert('Message cannot be empty');
+    
+        const sender = 'agent';
+        const ticketNo = "<%= ticket.ticketNo %>"; // Get ticketNo dynamically
+    
+        fetch(`/ticket/${ticketNo}/message`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ sender, message })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'ok') {
+                location.reload(); // Reload to display new message
+            }
+        })
+        .catch(error => console.error('Error:', error));
+    }
+
+        // Resolve ticket function
+        function resolveTicket() {
+        const ticketNo = "<%= ticket.ticketNo %>"; // Get ticketNo dynamically
+
+        fetch(`/ticket/${ticketNo}/resolve`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ status: 'Resolved' })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'ok') {
+                iziToast.success({
+                    title: 'Success',
+                    message: 'Ticket resolved successfully!',
+                    position: 'topRight'
+                });
+                setTimeout(() => {
+                    window.location.href = '/dashboard';
+                }, 2000);
+            }
+        })
+        .catch(error => console.error('Error:', error));
+    }
+    
+      </script>
+
+
+</body>
+
+</html>

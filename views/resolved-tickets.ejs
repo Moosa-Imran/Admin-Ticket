@@ -28,12 +28,13 @@
             <%- include('components/navbar') %>
             <!-- Sidebar -->
             <%- include('components/sidebar') %>
+            
 
             <!-- Main Content -->
             <div class="main-content">
                 <section class="section">
                     <div class="section-header">
-                        <h1>Resolved Tickets</h1>
+                        <h1>Pending Tickets</h1>
                     </div>
 
                     <div class="row">
@@ -41,15 +42,15 @@
                             <div class="card">
                                 <div class="card-body p-0">
                                     <div class="table-responsive">
-                                        <table class="table table-striped" id="paymentsTable">
+                                        <table class="table table-striped" id="ticketsTable">
                                             <thead>
                                                 <tr>
                                                     <th>Sl</th>
-                                                    <th>User</th>
-                                                    <th>Issue</th>
-                                                    <th>TID</th>
-                                                    <th>Date</th>
-                                                    <th>Status</th>
+                                                    <th>Name</th>
+                                                    <th>Email</th>
+                                                    <th>Ticket Number</th>
+                                                    <th>Service</th>
+                                                    <th>Created At</th>
                                                     <th>Action</th>
                                                 </tr>
                                             </thead>
@@ -68,22 +69,27 @@
         </div>
     </div>
 
-
-<!-- Details Modal -->
-<div class="modal fade" id="detailsModal" tabindex="-1" role="dialog" aria-labelledby="detailsModalLabel" aria-hidden="true">
+<!-- Confirmation Modal -->
+<div class="modal" id="confirmModal" tabindex="-1" role="dialog">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="detailsModalLabel">Details</h5>
+                <h5 class="modal-title">Confirm Action</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
             <div class="modal-body">
-                <!-- Content will be injected here by JavaScript -->
+                <p>Are you sure you want to accept this payment?</p>
+                <label for="confirmComment">Comment</label>
+                <textarea id="confirmComment" class="form-control" rows="2" placeholder="Enter a comment">Thanks! For Subscribing</textarea>
+                
+                <!-- Irreversible warning note -->
+                <p class="text-danger font-weight-bold mt-2">This process is irreversible.</p>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" id="confirmAccept">Accept</button>
             </div>
         </div>
     </div>
@@ -101,18 +107,17 @@
 
     <script>
         $(document).ready(function () {
-            // Fetch pending payments
             $.ajax({
-                url: '/investments/status',
+                url: '/tickets/status',
                 method: 'GET',
-                data: { status: 'active' },
+                data: { status: 'Resolved' },
                 success: function (data) {
-                    const tbody = $('#paymentsTable tbody');
+                    const tbody = $('#ticketsTable tbody');
                     tbody.empty(); // Clear existing data
     
                     // Check if data is empty
                     if (data.length === 0) {
-                        tbody.append('<tr><td colspan="7" class="text-center">No accepted payments found.</td></tr>');
+                        tbody.append('<tr><td colspan="7" class="text-center">No resolved tickets found.</td></tr>');
                         return;
                     }
     
@@ -121,13 +126,15 @@
                         tbody.append(`
                             <tr>
                                 <td>${index + 1}</td>
-                                <td>${item.username}</td>
-                                <td>$${item.amount}</td>
-                                <td>${item.TID}</td>
-                                <td>${new Date(item.timestamp).toLocaleDateString()}</td>
-                                <td><span class="badge badge-success">Accepted</span></td>
+                                <td>${item.fullName}</td>
+                                <td>${item.email}</td>
+                                <td>${item.ticketNo}</td>
+                                <td>${item.serviceType}</td>
+                                <td>${new Date(item.createdAt).toLocaleDateString()}</td>
                                 <td>
-                                    <button class="btn btn-md btn-info details" invest-id="${item._id}">Details</button>
+                                    <button class="btn text-white btn-md btn-primary">
+                                        <a href="/ticket?tid=${encodeURIComponent(item.ticketNo)}" style="color: white; text-decoration: none;">Open</a>
+                                    </button>
                                 </td>
                             </tr>
                         `);
@@ -137,64 +144,15 @@
                     console.error(error);
                     iziToast.error({
                         title: 'Error',
-                        message: 'Could not fetch resolved Tickets!',
+                        message: 'Could not fetch resolved tickets!',
                         position: 'topRight'
                     });
                 }
             });
     
-            // Handle Details button click
-            $(document).on('click', '.details', function () {
-                const investId = $(this).attr('invest-id');
-    
-                // Fetch details for the selected investment
-                $.ajax({
-                    url: `/investments/${investId}`,
-                    method: 'GET',
-                    success: function (item) {
-                        let imgPath = `https://cashcrown.org/${item.screenshot.slice(7)}`;
-                        // Prepare the modal content
-                        const modalContent = `
-                            <div class="modal-header">
-                                <h5 class="modal-title">TID: ${item.TID}</h5>
-                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                    <span aria-hidden="true">&times;</span>
-                                </button>
-                            </div>
-                            <div class="modal-body">
-                                <p><strong>Username:</strong> ${item.username}</p>
-                                <p><strong>Transaction Hash:</strong> ${item.transactionHash}</p>
-                                <p><strong>Plan:</strong> ${item.plan.charAt(0).toUpperCase() + item.plan.slice(1)}</p>
-                                <p><strong>Amount:</strong> $${item.amount}</p>
-                                <p><strong>Date:</strong> ${new Date(item.timestamp).toLocaleDateString()}</p>
-                                <p><strong>Status:</strong> <span class="badge badge-success">Accepted</span></p>
-                                <p><strong>Accepted At:</strong> ${new Date(item.acceptDate).toLocaleDateString()}</p>
-                                <p><strong>Screenshot:</strong></p>
-                                <img src="${imgPath}" alt="Screenshot" class="img-fluid" style="max-height: 300px; object-fit: cover;">
-                                <div class="mt-2">
-                                    <a href="${imgPath}" target="_blank" class="btn btn-primary">Open Image in New Tab</a>
-                                </div>
-                            </div>
-                        `;
-    
-                        // Set modal content and show the modal
-                        $('#detailsModal .modal-content').html(modalContent);
-                        $('#detailsModal').modal('show');
-                    },
-                    error: function (xhr, status, error) {
-                        console.error(error);
-                        iziToast.error({
-                            title: 'Error',
-                            message: 'Could not fetch payment details!',
-                            position: 'topRight'
-                        });
-                    }
-                });
-            });
 
         });
     </script>
-    
     
     
     

@@ -1,12 +1,12 @@
 const express = require('express');
 const path = require('path');
-const { ObjectId } = require('mongodb'); 
+const { ObjectId } = require('mongodb');
 const nodemailer = require('nodemailer');;
 const router = express.Router();
 const emailTemplates = require('./emailTemplates');
 const dotenv = require('dotenv');
 
-dotenv.config(); 
+dotenv.config();
 
 
 // Protected Route Middleware
@@ -21,7 +21,7 @@ function isAuthenticated(req, res, next) {
 // Create a transporter using Namecheap SMTP settings
 const transporter = nodemailer.createTransport({
     host: "smtp.privateemail.com",
-    port: 587, 
+    port: 587,
     secure: false, // Set to true if using port 465
     auth: {
         user: process.env.EMAIL, // Email from your .env file
@@ -74,42 +74,23 @@ router.get('/allusers', isAuthenticated, async (req, res) => {
     }
 });
 
-// Route for Fetching Investments
-router.get('/investments', isAuthenticated, async (req, res) => {
+// Route for Fetching Tickets
+router.get('/alltickets', isAuthenticated, async (req, res) => {
     try {
-        // Connect to the Investments collection in transactionsDb
-        const transactionsDb = req.app.locals.transactionsDb;
-        const investmentsCollection = transactionsDb.collection('Investments');
+        // Connect to the All collection in ticketsDb
+        const ticketsDb = req.app.locals.ticketsDb;
+        const ticketsCollection = ticketsDb.collection('All');
 
-        // Fetch all documents from the Investments collection
-        const investments = await investmentsCollection.find({}).toArray();
+        // Fetch all documents from the All collection
+        const tickets = await ticketsCollection.find({}).toArray();
 
         // Send the retrieved documents as a JSON response
-        res.status(200).json(investments);
+        res.status(200).json(tickets);
     } catch (error) {
-        console.error('Error fetching Investments:', error);
-        res.status(500).json({ error: 'Unable to fetch Investments' });
+        console.error('Error fetching tickets:', error);
+        res.status(500).json({ error: 'Unable to fetch tickets' });
     }
 });
-
-// Route for Fetching Withdrawals
-router.get('/withdrawals', isAuthenticated, async (req, res) => {
-    try {
-        // Connect to the Withdrawals collection in transactionsDb
-        const transactionsDb = req.app.locals.transactionsDb;
-        const withdrawalsCollection = transactionsDb.collection('Withdrawals');
-
-        // Fetch all documents from the Withdrawals collection
-        const withdrawals = await withdrawalsCollection.find({}).toArray();
-
-        // Send the retrieved documents as a JSON response
-        res.status(200).json(withdrawals);
-    } catch (error) {
-        console.error('Error fetching Withdrawals:', error);
-        res.status(500).json({ error: 'Unable to fetch Withdrawals' });
-    }
-});
-
 
 // Login Route
 router.post('/login', async (req, res) => {
@@ -117,15 +98,15 @@ router.post('/login', async (req, res) => {
     const usersDb = req.app.locals.usersDb;
     try {
         // Search for the user by username or email
-        const user = await usersDb.collection('Admin').findOne({username: username});
+        const user = await usersDb.collection('Admin').findOne({ username: username });
 
         // If user is not found
         if (!user) {
-            return res.status(401).json({status: 'invalid', message: 'Invalid username.' });
+            return res.status(401).json({ status: 'invalid', message: 'Invalid username.' });
         }
 
         if (user.password !== password) {
-            return res.status(401).json({status: 'incorrect', message: 'Incorrect password.' });
+            return res.status(401).json({ status: 'incorrect', message: 'Incorrect password.' });
         }
 
         // If valid, store user session and create cookie
@@ -135,15 +116,15 @@ router.post('/login', async (req, res) => {
         };
 
         // Send success response
-        res.status(200).json({status: 'success', message: 'Login successful!' });
+        res.status(200).json({ status: 'success', message: 'Login successful!' });
     } catch (error) {
         console.error('Error during login:', error);
-        res.status(500).json({status: 'error',  message: 'Internal server error' });
+        res.status(500).json({ status: 'error', message: 'Internal server error' });
     }
 });
 
-// Route to get investments by status
-router.get('/investments/status', isAuthenticated, async (req, res) => {
+// Route to get tickets by status
+router.get('/tickets/status', isAuthenticated, async (req, res) => {
     const { status } = req.query;
 
     if (!status) {
@@ -151,333 +132,69 @@ router.get('/investments/status', isAuthenticated, async (req, res) => {
     }
 
     try {
-        const investments = await req.app.locals.transactionsDb.collection('Investments').find({ status }).toArray();
+        const tickets = await req.app.locals.ticketsDb.collection('All').find({ status }).toArray();
 
-        // Return an empty array if no investments are found
-        return res.status(200).json(investments);
+        // Return an empty array if no tickets are found
+        return res.status(200).json(tickets);
     } catch (error) {
         console.error(error);
         return res.status(500).json({ message: 'Internal server error' });
     }
 });
 
-
-// Route to get investment by ID
-router.get('/investments/:investId', isAuthenticated, async (req, res) => {
-    const { investId } = req.params; // Get investId from URL parameters
-
+// Route for sending messages in a ticket conversation
+router.post('/ticket/:ticketNo/message', async (req, res) => {
     try {
-        // Connect to the Investments collection and find the investment by ID
-        const investment = await req.app.locals.transactionsDb.collection('Investments').findOne({ _id: new ObjectId(investId) });
-
-        // Check if the investment was found
-        if (!investment) {
-            return res.status(404).json({ message: 'Investment not found' });
-        }
-
-        // Send the found investment as a response
-        return res.status(200).json(investment);
-    } catch (error) {
-        console.error(error); // Log the error for debugging
-        return res.status(500).json({ message: 'Internal server error' }); // Send server error response
-    }
-});
-
-// Dictionary of plans and their respective amounts
-const plans = {
-    silver: 4,
-    gold: 20,
-    platinum: 65,
-    diamond: 130,
-    elite: 325 
-};
-
-// Dictionary of referrals and their respective amounts
-const ref = {
-    silver: 10,
-    gold: 50,
-    platinum: 150,
-    diamond: 300,
-    elite: 500 
-};
-
-// Update investment status route
-router.put('/investmentControl/:investId', isAuthenticated, async (req, res) => {
-    const investId = req.params.investId; // Extracting investment ID from route parameters
-    const { status, comment } = req.query; // Extracting status and comment from query parameters
-
-    // Check if the investment exists in the Investments collection
-    const investment = await req.app.locals.transactionsDb.collection('Investments').findOne({ _id: new ObjectId(investId) });
-
-    if (!investment) {
-        return res.status(404).json({ message: 'Investment not found' });
-    }
-
-    if (status === 'rejected') {
-        const { username, plan, TID, amount } = investment; 
-        // Update the investment status to 'rejected' and add comment
-        await req.app.locals.transactionsDb.collection('Investments').updateOne(
-            { _id: new ObjectId(investId) },
-            {
-                $set: {
-                    status: 'rejected', // Update status to 'rejected'
-                    comment // Add comment to the investment document
-                }
-            }
-        );
-
-        res.status(200).json({ message: 'Investment rejected successfully', investmentId: investId });
-        const user = await req.app.locals.usersDb.collection('Customers').findOne({ username });
-        const date = new Date();
-        // Send email in the background
-        const emailHtml = emailTemplates.investRejectTemplate(user, plan, amount, TID, comment, date);
-        transporter.sendMail({
-            from: `"Cash Crown" <${process.env.EMAIL}>`,
-            to: user.email,
-            subject: 'Investment Rejected!',
-            html: emailHtml // Use the HTML content
-        }).catch(error => {
-            console.error('Error sending email:', error);
-        });
-        return;
-
-    } else if (status === 'active') {
-        const { username, plan, TID, amount } = investment; 
-        const acceptDate = new Date(); 
-    
-        // Update the investment status to 'active', add comment, and set acceptDate
-        await req.app.locals.transactionsDb.collection('Investments').updateOne(
-            { _id: new ObjectId(investId) },
-            {
-                $set: {
-                    status: 'active', // Update status to 'active'
-                    comment, // Add comment to the investment document
-                    acceptDate // Add current date as 'acceptDate'
-                }
-            }
-        );
-    
-        // Check if user exists in the Customers collection
-        const user = await req.app.locals.usersDb.collection('Customers').findOne({ username });
-    
-        if (user) {
-            // Calculate the ppd increment based on the plan
-            const ppdIncrement = plans[plan] || 0; // Default to 0 if plan is not found in the dictionary
-            const refIncrement = ref[plan] || 0; 
-    
-            // Check if the referral code exists and is valid
-            if (user.ref.code && user.ref.code.trim() !== '' && !user.ref.paid) {
-                // Get the value of user.ref.code
-                const refCode = user.ref.code;
-    
-                // Find the referrer by username
-                const referrer = await req.app.locals.usersDb.collection('Customers').findOne({ username: refCode });
-    
-                if (referrer) {
-                    // Increment the referrer’s bonus and total count
-                    await req.app.locals.usersDb.collection('Customers').updateOne(
-                        { username: refCode },
-                        {
-                            $inc: {
-                                'ref.bonus': refIncrement, // Increase the bonus by 20
-                                'ref.total': 1    // Increase the total count by 1
-                            }
-                        }
-                    );
-                }
-    
-                // Set ref.paid to true for the original user (if the above conditions are met)
-                await req.app.locals.usersDb.collection('Customers').updateOne(
-                    { username },
-                    {
-                        $set: {
-                            'ref.paid': true // Set ref.paid to true for the original user
-                        }
-                    }
-                );
-            }
-    
-            // User exists, update the 'ppd' field and set active to true
-            await req.app.locals.usersDb.collection('Customers').updateOne(
-                { username },
-                {
-                    $set: {
-                        active: true 
-                    },
-                    $inc: {
-                        ppd: ppdIncrement // Increment 'ppd' according to the plan
-                    }
-                }
-            );
-    
-             res.status(200).json({ message: 'Investment activated successfully', investmentId: investId });
-                            // Send email in the background
-                            const emailHtml = emailTemplates.investSuccessTemplate(user, plan, amount, TID, comment, acceptDate);
-                            transporter.sendMail({
-                                from: `"Cash Crown" <${process.env.EMAIL}>`,
-                                to: user.email,
-                                subject: 'Investment Activated Successfully!',
-                                html: emailHtml // Use the HTML content
-                            }).catch(error => {
-                                console.error('Error sending email:', error);
-                            });
-                            return;
-        } else {
-            return res.status(404).json({ message: 'User not found' });
-        }
-    }
-    
-    else if (status === 'delete') {
-        // Delete the investment document
-        await req.app.locals.transactionsDb.collection('Investments').deleteOne({ _id: new ObjectId(investId) });
+        const { ticketNo } = req.params;
+        const { sender, message } = req.body;
         
-        return res.status(200).json({ message: 'Investment deleted successfully', investmentId: investId });
+        const ticket = await req.app.locals.ticketsDb.collection('All').findOne({ ticketNo });
 
-    } else {
-        return res.status(400).json({ message: 'Invalid status provided' });
-    }
-});
+        if (!ticket) {
+            return res.status(404).json({ status: 'error', message: 'Ticket not found' });
+        }
 
-// Route to get withdraw by status
-router.get('/withdraws/status', isAuthenticated, async (req, res) => {
-    const { status } = req.query;
+        const newMessage = {
+            sender,
+            message,
+            timestamp: new Date()
+        };
 
-    if (!status) {
-        return res.status(400).json({ message: 'Status is required' });
-    }
+        // Push the new message to the conversation array
+        await req.app.locals.ticketsDb.collection('All').updateOne(
+            { ticketNo },
+            { status: 'Open' },
+            { $push: { conversation: newMessage } }
+        );
 
-    try {
-        const Withdrawals = await req.app.locals.transactionsDb.collection('Withdrawals').find({ status }).toArray();
+        res.json({ status: 'ok', message: 'Message sent' });
 
-        // Return an empty array if no Withdrawals are found
-        return res.status(200).json(Withdrawals);
     } catch (error) {
         console.error(error);
-        return res.status(500).json({ message: 'Internal server error' });
+        res.status(500).json({ status: 'error', message: 'Something went wrong' });
     }
 });
 
-// Route to get withdraw by ID
-router.get('/withdraws/:withdrawId', isAuthenticated, async (req, res) => {
-    const { withdrawId } = req.params; // Get withdrawId from URL parameters
-
+// Route to resolve a ticket
+router.post('/ticket/:ticketNo/resolve', async (req, res) => {
     try {
-        // Connect to the withdraws collection and find the withdraw by ID
-        const withdraw = await req.app.locals.transactionsDb.collection('Withdrawals').findOne({ _id: new ObjectId(withdrawId) });
+        const ticketNo = req.params.ticketNo;
+        const { status } = req.body;
 
-        // Check if the withdraw was found
-        if (!withdraw) {
-            return res.status(404).json({ message: 'Withdraw not found' });
-        }
+        // Update the ticket status to "Resolved"
+        const result = await req.app.locals.ticketsDb.collection('All').updateOne(
+            { ticketNo },
+            { $set: { status } }
+        );
 
-        // Send the found withdraw as a response
-        return res.status(200).json(withdraw);
-    } catch (error) {
-        console.error(error); // Log the error for debugging
-        return res.status(500).json({ message: 'Internal server error' }); // Send server error response
-    }
-});
-
-// Update withdraw status route
-router.put('/withdrawControl/:withdrawId', isAuthenticated, async (req, res) => {
-    const withdrawId = req.params.withdrawId; // Extracting withdraw ID from route parameters
-    const { status, comment } = req.query; // Extracting status and comment from query parameters
-
-    try {
-        // Check if the withdraw exists in the withdraws collection
-        const withdraw = await req.app.locals.transactionsDb.collection('Withdrawals').findOne({ _id: new ObjectId(withdrawId) });
-
-        if (!withdraw) {
-            return res.status(404).json({ message: 'Withdraw not found' });
-        }
-
-        if (status === 'active') { 
-            const { username, amount, walletAddress, TID } = withdraw; 
-            const acceptDate = new Date(); 
-            // Update the withdraw status to 'completed' and add comment
-            await req.app.locals.transactionsDb.collection('Withdrawals').updateOne(
-                { _id: new ObjectId(withdrawId) },
-                {
-                    $set: {
-                        status: 'completed', // Update status to 'completed'
-                        comment, // Add comment to the withdraw document
-                        acceptDate
-                    }
-                }
-            );
-
-            res.status(200).json({ message: 'Withdraw accepted successfully', withdrawId: withdrawId });
-            const user = await req.app.locals.usersDb.collection('Customers').findOne({ username });
-            // Send email in the background
-            const emailHtml = emailTemplates.withdrawSuccessTemplate(user, amount, TID, walletAddress, comment, acceptDate);
-            transporter.sendMail({
-                from: `"Cash Crown" <${process.env.EMAIL}>`,
-                to: user.email,
-                subject: 'Withdraw Fulfilled!',
-                html: emailHtml // Use the HTML content
-            }).catch(error => {
-                console.error('Error sending email:', error);
-            });
-            return;
-
-        } else if (status === 'rejected') {
-            const { username, amount, walletAddress, TID } = withdraw; 
-            const rejectDate = new Date(); 
-
-            // Update the withdraw status to 'rejected', add comment, and set rejectDate
-            await req.app.locals.transactionsDb.collection('Withdrawals').updateOne(
-                { _id: new ObjectId(withdrawId) },
-                {
-                    $set: {
-                        status: 'rejected', // Update status to 'rejected'
-                        comment, // Add comment to the withdraw document
-                        rejectDate // Add current date as 'rejectDate'
-                    }
-                }
-            );
-
-            // Check if user exists in the Customers collection
-            const user = await req.app.locals.usersDb.collection('Customers').findOne({ username });
-
-            if (user) {
-                // User exists, update the 'profit' field
-                await req.app.locals.usersDb.collection('Customers').updateOne(
-                    { username },
-                    {
-                        $inc: {
-                            profit: amount, 
-                        }
-                    }
-                );
-            } else {
-                return res.status(404).json({ message: 'User not found' });
-            }
-
-            res.status(200).json({ message: 'Withdraw rejected successfully', withdrawId: withdrawId });
-            // Send email in the background
-            const emailHtml = emailTemplates.withdrawRejectTemplate(user, amount, TID, walletAddress, comment, rejectDate);
-            transporter.sendMail({
-                from: `"Cash Crown" <${process.env.EMAIL}>`,
-                to: user.email,
-                subject: 'Withdraw Request Rejected!',
-                html: emailHtml // Use the HTML content
-            }).catch(error => {
-                console.error('Error sending email:', error);
-            });
-            return;
-
-        } else if (status === 'delete') {
-            // Delete the withdraw document
-            await req.app.locals.transactionsDb.collection('Withdrawals').deleteOne({ _id: new ObjectId(withdrawId) });
-            
-            return res.status(200).json({ message: 'Withdraw deleted successfully', withdrawId: withdrawId });
-
+        if (result.modifiedCount > 0) {
+            res.json({ status: 'ok' });
         } else {
-            return res.status(400).json({ message: 'Invalid status provided' });
+            res.status(400).json({ status: 'error', message: 'Ticket not found or already resolved' });
         }
     } catch (error) {
         console.error(error);
-        return res.status(500).json({ message: 'Internal server error' });
+        res.status(500).json({ status: 'error', message: 'Something went wrong' });
     }
 });
 
@@ -488,8 +205,8 @@ router.post('/logout', (req, res) => {
         if (err) {
             return res.status(500).json({ message: 'Logout failed. Please try again later.' });
         }
-        res.clearCookie('connect.sid'); 
-        res.status(200).json({ message: 'Logout successful!' });
+        res.clearCookie('connect.sid');
+        res.status(200).json({ logout: true, message: 'Logout successful!' });
     });
 });
 
@@ -502,6 +219,29 @@ router.get('/dashboard', isAuthenticated, (req, res) => {
 router.get('/users', isAuthenticated, (req, res) => {
     res.render('users');
 
+});
+
+// Route to handle viewing a specific ticket
+router.get('/ticket', async (req, res) => {
+    try {
+        const userId = req.session.user;
+        const usersDb = req.app.locals.usersDb;
+        const user = await usersDb.collection('Customers').findOne({ _id: new ObjectId(userId) });
+        const { tid } = req.query; // Get the ticket number from the query string
+
+        // Fetch the ticket from the database
+        const ticket = await req.app.locals.ticketsDb.collection('All').findOne({ ticketNo: tid });
+
+        if (!ticket) {
+            return res.status(404).render('error', { message: 'Ticket not found' });
+        }
+
+        // Render the ticket details page and pass the ticket data
+        res.render('ticket-details', { ticket, user });
+    } catch (error) {
+        console.error(error);
+        res.status(500).render('error', { message: 'Something went wrong, please try again later.' });
+    }
 });
 
 router.get('/pending-tickets', isAuthenticated, (req, res) => {

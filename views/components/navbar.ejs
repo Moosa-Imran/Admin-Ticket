@@ -61,9 +61,30 @@
                 <a href="/profile" class="dropdown-item has-icon">
                     <i class="far fa-user"></i> Profile
                 </a>
-                <a href="/logout" class="dropdown-item has-icon text-danger">
+                <a id="logout" href="#" class="dropdown-item has-icon text-danger">
                     <i class="fas fa-sign-out-alt"></i> Logout
                 </a>
+                <script>
+                    document.getElementById('logout').addEventListener('click', function(e){
+                        e.preventDefault();
+                        fetch('/logout', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({
+                                logout: true
+                            })
+                        })
+                        .then(res => res.json())
+                        .then(data => {
+                            if(data.logout){
+                                window.location.href = '/';
+                            }
+                        })
+                        .catch(err => console.log(err));
+                    });
+                </script>
             </div>
         </li>
     </ul>
