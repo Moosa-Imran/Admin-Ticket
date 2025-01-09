@@ -163,7 +163,7 @@ router.post('/ticket/:ticketNo/message', async (req, res) => {
         // Push the new message to the conversation array
         await req.app.locals.ticketsDb.collection('All').updateOne(
             { ticketNo },
-            { $push: { conversation: newMessage } }
+            { $push: { conversation: newMessage }, $set: { status: 'Open' } }
         );
 
         res.json({ status: 'ok', message: 'Message sent' });

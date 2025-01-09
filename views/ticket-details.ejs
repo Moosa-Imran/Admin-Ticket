@@ -80,25 +80,45 @@
                                     <!-- Chat Box -->
                                     <div class="ticket-chat mt-5 mb-4">
                                         <div class="chat-box" style="max-height: 400px; overflow-y: auto;">
-                                            <% ticket.conversation.forEach((message)=> { %>
-                                                <div
-                                                    class="chat-message <%= message.sender === 'customer' ? 'text-left' : 'text-right' %> mb-1">
-                                                    <div
-                                                        class="message bg-<%= message.sender === 'customer' ? 'primary' : 'success' %> text-white p-2 rounded-lg d-inline-block max-w-md">
+                                            <% ticket.conversation.forEach((message) => { %>
+                                                <div class="chat-message <%= message.sender === 'customer' ? 'text-left' : 'text-right' %> mb-1">
+                                                    <div class="message bg-<%= message.sender === 'customer' ? 'primary' : 'success' %> text-white p-2 rounded-lg d-inline-block max-w-md">
                                                         <p style="line-height: 12px !important"><strong>
-                                                                <%= message.sender==='customer' ? ticket.fullName
-                                                                    : 'Agent' %>:
+                                                                <%= message.sender === 'customer' ? ticket.fullName : 'Agent' %>:
                                                             </strong></p>
-                                                        <p style="line-height: 12px !important">
-                                                            <%= message.message %>
-                                                        </p>
+                                        
+                                                        <% if (message.message.startsWith('$$file:=>')) { %>
+                                                            <% const fileName = message.message.replace('$$file:=>', ''); %>
+                                                            <% if (fileName.endsWith('.pdf')) { %>
+                                                                <!-- Render PDF with a Download Button and FontAwesome Icon -->
+                                                                <a href="http://localhost:3006/uploads/<%= fileName %>" download
+                                                                    class="flex items-center bg-blue-600 text-white px-4 py-2 rounded-md shadow-md hover:bg-blue-500">
+                                                                    <i class="fas fa-file-pdf mr-2"></i> Download PDF
+                                                                </a>
+                                                            <% } else { %>
+                                                                <!-- Render Image with Reduced Size -->
+                                                                <a href="http://localhost:3006/uploads/<%= fileName %>" target="_blank">
+                                                                    <img src="http://localhost:3006/uploads/<%= fileName %>" 
+                                                                         alt="Uploaded Image" 
+                                                                         class="mt-2 w-24 h-auto rounded-md shadow-md">
+                                                                </a>
+                                                            <% } %>
+                                                        <% } else { %>
+                                                            <!-- Render Text Message -->
+                                                            <p style="line-height: 12px !important">
+                                                                <%= message.message %>
+                                                            </p>
+                                                        <% } %>
+                                        
                                                         <p style="line-height: 12px !important" class="text-xs text-white-400 mt-1">
                                                             <%= new Date(message.timestamp).toLocaleString() %>
                                                         </p> <!-- Displaying timestamp -->
                                                     </div>
                                                 </div>
-                                                <% }) %>
+                                            <% }) %>
                                         </div>
+                                        
+                                        
 
                                         <!-- New Message Input -->
                                         <div class="mt-3">
