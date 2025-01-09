@@ -1,12 +1,35 @@
 const express = require('express');
 const path = require('path');
 const { ObjectId } = require('mongodb');
+const multer = require('multer');
 const nodemailer = require('nodemailer');;
 const router = express.Router();
 const emailTemplates = require('./emailTemplates');
 const dotenv = require('dotenv');
 
 dotenv.config();
+
+// Configure multer for image uploads
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, 'public/uploads/');
+    },
+    filename: (req, file, cb) => {
+        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+        cb(null, `${file.fieldname}-${uniqueSuffix}${path.extname(file.originalname)}`);
+    }
+});
+
+const fileFilter = (req, file, cb) => {
+    const allowedTypes = ['image/', 'application/pdf'];
+    if (allowedTypes.some(type => file.mimetype.startsWith(type))) {
+        cb(null, true);
+    } else {
+        cb(new Error('Only image and PDF files are allowed!'), false);
+    }
+};
+
+const upload = multer({ storage, fileFilter });
 
 
 // Protected Route Middleware
@@ -167,6 +190,44 @@ router.post('/ticket/:ticketNo/message', async (req, res) => {
         );
 
         res.json({ status: 'ok', message: 'Message sent' });
+
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ status: 'error', message: 'Something went wrong' });
+    }
+});
+
+// Route for file upload in a ticket conversation
+router.post('/ticket/:ticketNo/file-upload', upload.single('file'), async (req, res) => {
+    try {
+        const { ticketNo } = req.params;
+        const file = req.file;
+
+        if (!file) {
+            return res.status(400).json({ status: 'error', message: 'No file uploaded' });
+        }
+
+        // Fetch the ticket from the database
+        const ticket = await req.app.locals.ticketsDb.collection('All').findOne({ ticketNo });
+
+        if (!ticket) {
+            return res.status(404).json({ status: 'error', message: 'Ticket not found' });
+        }
+
+        // Create the message with the file prefix
+        const newMessage = {
+            sender: 'agent', 
+            message: `$$file:=>${file.filename}`, // Prefix to indicate a file
+            timestamp: new Date()
+        };
+
+        // Push the new message to the conversation array
+        await req.app.locals.ticketsDb.collection('All').updateOne(
+            { ticketNo },
+            { $push: { conversation: newMessage }, $set: { status: 'Open' } }
+        );
+
+        res.json({ status: 'ok', message: 'File uploaded as message' });
 
     } catch (error) {
         console.error(error);

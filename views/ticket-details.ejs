@@ -2,217 +2,307 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta content="width=device-width, initial-scale=1, maximum-scale=1, shrink-to-fit=no" name="viewport">
-    <title>Dashboard</title>
+  <meta charset="UTF-8" />
+  <meta content="width=device-width, initial-scale=1, maximum-scale=1, shrink-to-fit=no" name="viewport" />
+  <title>Dashboard</title>
 
-    <!-- General CSS Files -->
-    <link rel="stylesheet" href="asset/admin/css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/izitoast/1.4.0/css/iziToast.css">
-    <link rel="stylesheet" href="asset/admin/css/style.css">
-    <link rel="stylesheet" href="asset/admin/css/components.css">
-    <link rel="stylesheet" href="asset/admin/css/custom.css">
-
-
+  <!-- General CSS Files -->
+  <link rel="stylesheet" href="asset/admin/css/bootstrap.min.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/izitoast/1.4.0/css/iziToast.css" />
+  <link rel="stylesheet" href="asset/admin/css/style.css" />
+  <link rel="stylesheet" href="asset/admin/css/components.css" />
+  <link rel="stylesheet" href="asset/admin/css/custom.css" />
 </head>
 
 <body>
-    <div id="app">
-        <div class="main-wrapper">
-            <div id="overlay">
-                <div class="cv-spinner">
-                    <span class="spinner"></span>
-                </div>
-            </div>
-
-            <!-- Navbar -->
-            <%- include('components/navbar') %>
-                <!-- Sidebar -->
-                <%- include('components/sidebar') %>
-
-                    <div class="main-content">
-                        <section class="section">
-
-
-                            <main class="main p-4 md:ml-64 h-screen min-h-screen pt-20 bg-light">
-                                <div class="ticket-details bg-white rounded shadow-lg p-5">
-                                    <!-- Title -->
-                                    <h1 class="text-3xl font-weight-bold text-dark mb-4">Ticket Details</h1>
-
-                                    <!-- Ticket Information -->
-                                    <div class="ticket-info mt-4">
-                                        <div class="row">
-                                            <div class="col-md-6">
-                                                <p><strong>Ticket Number:</strong>
-                                                    <%= ticket.ticketNo %>
-                                                </p>
-                                                <p><strong>Full Name:</strong>
-                                                    <%= ticket.fullName %>
-                                                </p>
-                                                <p><strong>Email:</strong>
-                                                    <%= ticket.email %>
-                                                </p>
-                                                <p><strong>Phone Number:</strong>
-                                                    <%= ticket.phoneNumber %>
-                                                </p>
-                                                <p><strong>Address:</strong>
-                                                    <%= ticket.address %>
-                                                </p>
-                                            </div>
-                                            <div class="col-md-6">
-                                                <p><strong>Service Type:</strong>
-                                                    <%= ticket.serviceType %>
-                                                </p>
-                                                <p><strong>Sub-Service:</strong>
-                                                    <%= ticket.subService %>
-                                                </p>
-                                                <p><strong>Status:</strong>
-                                                    <%= ticket.status %>
-                                                </p>
-                                                <p><strong>Created At:</strong>
-                                                    <%= ticket.createdAt.toLocaleString() %>
-                                                </p>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <!-- Chat Box -->
-                                    <div class="ticket-chat mt-5 mb-4">
-                                        <div class="chat-box" style="max-height: 400px; overflow-y: auto;">
-                                            <% ticket.conversation.forEach((message) => { %>
-                                                <div class="chat-message <%= message.sender === 'customer' ? 'text-left' : 'text-right' %> mb-1">
-                                                    <div class="message bg-<%= message.sender === 'customer' ? 'primary' : 'success' %> text-white p-2 rounded-lg d-inline-block max-w-md">
-                                                        <p style="line-height: 12px !important"><strong>
-                                                                <%= message.sender === 'customer' ? ticket.fullName : 'Agent' %>:
-                                                            </strong></p>
-                                        
-                                                        <% if (message.message.startsWith('$$file:=>')) { %>
-                                                            <% const fileName = message.message.replace('$$file:=>', ''); %>
-                                                            <% if (fileName.endsWith('.pdf')) { %>
-                                                                <!-- Render PDF with a Download Button and FontAwesome Icon -->
-                                                                <a href="http://localhost:3006/uploads/<%= fileName %>" download
-                                                                    class="flex items-center bg-blue-600 text-white px-4 py-2 rounded-md shadow-md hover:bg-blue-500">
-                                                                    <i class="fas fa-file-pdf mr-2"></i> Download PDF
-                                                                </a>
-                                                            <% } else { %>
-                                                                <!-- Render Image with Reduced Size -->
-                                                                <a href="http://localhost:3006/uploads/<%= fileName %>" target="_blank">
-                                                                    <img src="http://localhost:3006/uploads/<%= fileName %>" 
-                                                                         alt="Uploaded Image" 
-                                                                         class="mt-2 w-24 h-auto rounded-md shadow-md">
-                                                                </a>
-                                                            <% } %>
-                                                        <% } else { %>
-                                                            <!-- Render Text Message -->
-                                                            <p style="line-height: 12px !important">
-                                                                <%= message.message %>
-                                                            </p>
-                                                        <% } %>
-                                        
-                                                        <p style="line-height: 12px !important" class="text-xs text-white-400 mt-1">
-                                                            <%= new Date(message.timestamp).toLocaleString() %>
-                                                        </p> <!-- Displaying timestamp -->
-                                                    </div>
-                                                </div>
-                                            <% }) %>
-                                        </div>
-                                        
-                                        
-
-                                        <!-- New Message Input -->
-                                        <div class="mt-3">
-                                            <div class="form-group">
-                                                <input name="message"
-                                                    id="newMessage" class="form-control rounded-lg border-dark shadow-sm p-3"
-                                                    placeholder="Type your message..."></input>
-                                            </div>
-                                            <button onclick="sendMessage()"
-                                                class="btn btn-warning w-100 mt-2 py-2 rounded-lg shadow-md bg-blue-500 hover:bg-blue-700 transition duration-200">Send
-                                                Reply</button>
-                                        </div>
-                                    </div>
-
-
-                                    <!-- Resolve Button -->
-                                    <div class="resolve-ticket mt-4 d-flex justify-content-between">
-                                        <button onclick="resolveTicket()" class="btn btn-success w-100 py-3">Resolve Ticket</button>
-                                        <button class="btn btn-danger w-100 py-3"><a style="text-decoration: none; color: white;" href="/dashboard">Close Ticket</a></button>
-                                    </div>
-                                </div>
-                            </main>
-
-
-
-                        </section>
-                    </div>
+  <div id="app">
+    <div class="main-wrapper">
+      <div id="overlay">
+        <div class="cv-spinner">
+          <span class="spinner"></span>
         </div>
+      </div>
+
+      <!-- Navbar -->
+      <%- include('components/navbar') %>
+        <!-- Sidebar -->
+        <%- include('components/sidebar') %>
+
+          <div class="main-content">
+            <section class="section">
+              <main class="main p-4 md:ml-64 h-screen min-h-screen pt-20 bg-light">
+                <div class="ticket-details bg-white rounded shadow-lg p-5">
+                  <!-- Title -->
+                  <h1 class="text-3xl font-bold text-dark mb-4">
+                    Ticket Details
+                  </h1>
+
+                  <!-- Ticket Information -->
+                  <div class="ticket-info mt-4">
+                    <div class="row">
+                      <!-- Left Column -->
+                      <div class="col-md-6">
+                        <p>
+                          <strong>Ticket Number:</strong>
+                          <%= ticket.ticketNo %>
+                        </p>
+                        <p>
+                          <strong>Full Name:</strong>
+                          <%= ticket.fullName %>
+                        </p>
+                        <p>
+                          <strong>Email:</strong>
+                          <%= ticket.email %>
+                        </p>
+                        <p>
+                          <strong>Phone Number:</strong>
+                          <%= ticket.phoneNumber %>
+                        </p>
+                        <p>
+                          <strong>Address:</strong>
+                          <%= ticket.address %>
+                        </p>
+                      </div>
+                      <!-- Right Column -->
+                      <div class="col-md-6">
+                        <p>
+                          <strong>Service Type:</strong>
+                          <%= ticket.serviceType %>
+                        </p>
+                        <p>
+                          <strong>Sub-Service:</strong>
+                          <%= ticket.subService %>
+                        </p>
+                        <p>
+                          <strong>Status:</strong>
+                          <%= ticket.status %>
+                        </p>
+                        <p>
+                          <strong>Created At:</strong>
+                          <%= ticket.createdAt.toLocaleString() %>
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Chat Box -->
+                  <div class="ticket-chat mt-5">
+                    <div class="chat-box border rounded shadow-sm p-3" style="max-height: 400px; overflow-y: auto">
+                      <% ticket.conversation.forEach((message) => { %>
+                        <div class="chat-message mb-3 <%= message.sender === 'customer' ? 'text-left' : 'text-right' %>">
+                          <div class="message bg-<%= message.sender === 'customer' ? 'primary' : 'success' %> text-white p-3 rounded-lg d-inline-block max-w-md">
+                            <p class="mb-1">
+                              <strong>
+                                <%= message.sender === 'customer' ? ticket.fullName : 'Agent' %>:
+                              </strong>
+                            </p>
+                            <% if (message.message.startsWith('$$file:=>')) { %>
+                              <% const fileName = message.message.replace('$$file:=>', ''); %>
+                              <% const host = message.sender === 'customer' ? 'https://customer.romanianworkers.co.uk' : ''; %>
+                              <% if (fileName.endsWith('.pdf')) { %>
+                                <!-- Render PDF -->
+                                <a href="<%= host %>/uploads/<%= fileName %>" download class="btn btn-sm btn-info">
+                                  <i class="fas fa-file-pdf"></i> Download PDF
+                                </a>
+                              <% } else { %>
+                                <!-- Render Image -->
+                                <a href="<%= host %>/uploads/<%= fileName %>" target="_blank">
+                                  <img src="<%= host %>/uploads/<%= fileName %>" alt="Uploaded Image" class="img-fluid mt-2 w-24 rounded" />
+                                </a>
+                              <% } %>
+                            <% } else { %>
+                              <p class="mb-1">
+                                <%= message.message %>
+                              </p>
+                            <% } %>
+                            <small class="text-light d-block mt-2">
+                              <%= new Date(message.timestamp).toLocaleString() %>
+                            </small>
+                          </div>
+                        </div>
+                      <% }) %>
+                    </div>
+                    
+
+                    <!-- New Message Input -->
+                    <div class="new-message mt-3 d-flex align-items-center">
+                      <!-- File Input Icon -->
+                      <div class="me-2">
+                        <label for="fileInput" class="cursor-pointer">
+                          <i class="fas fa-paperclip text-gray-500 hover:text-blue-500 text-2xl"></i>
+                        </label>
+                        <input type="file" id="fileInput" accept="image/*,application/pdf" class="d-none" />
+                      </div>
+
+                      <!-- Text Input -->
+                      <div class="flex-grow-1">
+                        <input type="text" id="newMessage" class="form-control shadow-sm p-3 rounded-lg"
+                          placeholder="Type your message..." />
+                      </div>
+
+                      <!-- Send Button -->
+                      <button onclick="sendMessage()" class="btn btn-primary ms-2 py-2 px-4">
+                        Send
+                      </button>
+                    </div>
+                  </div>
+
+                  <!-- Resolve and Close Buttons -->
+                  <div class="resolve-ticket mt-4 d-flex gap-3">
+                    <button onclick="resolveTicket()" class="btn btn-success w-50 py-3">
+                      Resolve Ticket
+                    </button>
+                    <a href="/dashboard" class="btn btn-danger w-50 py-3 text-white text-decoration-none">Close
+                      Ticket</a>
+                  </div>
+                </div>
+              </main>
+            </section>
+          </div>
     </div>
+  </div>
 
+  <!-- General JS Scripts -->
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  <script src="asset/admin/js/bootstrap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/izitoast/1.4.0/js/iziToast.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/feather-icons@4.28.0/dist/feather.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.nicescroll/3.7.6/jquery.nicescroll.min.js"></script>
+  <script src="asset/admin/js/scripts.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-    <!-- General JS Scripts -->
-    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-    <script src="asset/admin/js/bootstrap.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/izitoast/1.4.0/js/iziToast.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/feather-icons@4.28.0/dist/feather.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.nicescroll/3.7.6/jquery.nicescroll.min.js"></script>
-    <script src="asset/admin/js/scripts.js"></script>
+  <script>
+    $('#fileInput').on('change', function () {
+      const file = this.files[0];
 
+      if (!file) return; // No file selected
 
-    <script>
-        function sendMessage() {
-        const message = document.getElementById('newMessage').value;
-        if (!message) return alert('Message cannot be empty');
-    
-        const sender = 'agent';
-        const ticketNo = "<%= ticket.ticketNo %>"; // Get ticketNo dynamically
-    
-        fetch(`/ticket/${ticketNo}/message`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ sender, message })
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.status === 'ok') {
-                location.reload(); // Reload to display new message
-            }
-        })
-        .catch(error => console.error('Error:', error));
+      // Check file type (allow images and PDFs only)
+      const allowedTypes = ['image/', 'application/pdf'];
+      if (!allowedTypes.some(type => file.type.startsWith(type))) {
+        Swal.fire({
+          title: 'Invalid File',
+          text: 'Please upload a valid image or PDF file.',
+          icon: 'error',
+          confirmButtonColor: '#3A4A8A'
+        });
+        this.value = ''; // Reset the input field
+        return;
+      }
+
+      const fileName = file.name;
+      Swal.fire({
+        title: 'Are you sure?',
+        text: `Are you sure you want to upload the file: ${fileName}?`,
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3A4A8A',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes, upload it!',
+        cancelButtonText: 'No, cancel!'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          uploadFile(file);
+        } else {
+          this.value = ''; // Reset file input if the user cancels
+        }
+      });
+    });
+
+    function uploadFile(file) {
+      const ticketNo = "<%= ticket.ticketNo %>"; // Get ticket number dynamically
+
+      const formData = new FormData();
+      formData.append('file', file);
+
+      $.ajax({
+        url: `/ticket/${ticketNo}/file-upload`,
+        type: 'POST',
+        data: formData,
+        processData: false,
+        contentType: false,
+        success: function (data) {
+          if (data.status === 'ok') {
+            Swal.fire({
+              title: 'Success',
+              text: 'File uploaded successfully.',
+              icon: 'success',
+              confirmButtonColor: '#3A4A8A'
+            }).then(() => {
+              location.reload(); // Reload the page to show the uploaded file
+            });
+          } else {
+            Swal.fire({
+              title: 'Error',
+              text: 'Failed to upload file. Please try again.',
+              icon: 'error',
+              confirmButtonColor: '#3A4A8A'
+            });
+          }
+        },
+        error: function (error) {
+          console.error('Error:', error);
+          Swal.fire({
+            title: 'Error',
+            text: 'Failed to upload file. Please try again.',
+            icon: 'error',
+            confirmButtonColor: '#3A4A8A'
+          });
+        }
+      });
     }
 
-        // Resolve ticket function
-        function resolveTicket() {
-        const ticketNo = "<%= ticket.ticketNo %>"; // Get ticketNo dynamically
+    function sendMessage() {
+      const message = document.getElementById("newMessage").value;
+      if (!message) return alert("Message cannot be empty");
 
-        fetch(`/ticket/${ticketNo}/resolve`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ status: 'Resolved' })
+      const sender = "agent";
+      const ticketNo = "<%= ticket.ticketNo %>"; // Get ticketNo dynamically
+
+      fetch(`/ticket/${ticketNo}/message`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ sender, message }),
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          if (data.status === "ok") {
+            location.reload(); // Reload to display new message
+          }
         })
-        .then(response => response.json())
-        .then(data => {
-            if (data.status === 'ok') {
-                iziToast.success({
-                    title: 'Success',
-                    message: 'Ticket resolved successfully!',
-                    position: 'topRight'
-                });
-                setTimeout(() => {
-                    window.location.href = '/dashboard';
-                }, 2000);
-            }
-        })
-        .catch(error => console.error('Error:', error));
+        .catch((error) => console.error("Error:", error));
     }
-    
-      </script>
 
+    // Resolve ticket function
+    function resolveTicket() {
+      const ticketNo = "<%= ticket.ticketNo %>"; // Get ticketNo dynamically
 
+      fetch(`/ticket/${ticketNo}/resolve`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ status: "Resolved" }),
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          if (data.status === "ok") {
+            iziToast.success({
+              title: "Success",
+              message: "Ticket resolved successfully!",
+              position: "topRight",
+            });
+            setTimeout(() => {
+              window.location.href = "/dashboard";
+            }, 2000);
+          }
+        })
+        .catch((error) => console.error("Error:", error));
+    }
+  </script>
 </body>
 
 </html>
